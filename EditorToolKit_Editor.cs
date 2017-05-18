@@ -21,5 +21,12 @@ public class EditorToolKit_Editor : ScriptableObject {
                 }
             }
     }
+	
+	[MenuItem("Utilities/Toggle Active %e")]
+    static void ToggleActive() {
+        foreach (GameObject CurSel in Selection.objects) {
+            CurSel.SetActive(!CurSel.activeSelf);
+        }
+    }
 }
 #endif
