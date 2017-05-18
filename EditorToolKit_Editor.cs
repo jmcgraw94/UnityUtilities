@@ -5,6 +5,7 @@ using UnityEditor;
 //Shortcut Commands: https://docs.unity3d.com/ScriptReference/MenuItem.html
 
 public class EditorToolKit_Editor : ScriptableObject {
+//A collection of shortcut complete editor tools
 	
     [MenuItem("Utilities/Deselect All &#d")]
     static void DoDeselect() {
