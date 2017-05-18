@@ -50,6 +50,29 @@ public class RecursiveMaterialApply_Editor : MonoBehaviour {
 }
 
 [ExecuteInEditMode]
+public class AutoSnap_Script : MonoBehaviour {
+
+    public float snapValueX = 1f;
+    public float snapValueY = 1f;
+    public float snapValueZ = 1f;
+
+
+    void Update() {
+        if (Application.isPlaying)
+            return;
+
+        if (snapValueX != 0)
+            transform.position = new Vector3(Mathf.Round(transform.position.x * (1 / snapValueX)) / (1 / snapValueX), transform.position.y, transform.position.z);
+
+        if (snapValueY != 0)
+            transform.position = new Vector3(transform.position.x, Mathf.Round(transform.position.y * (1 / snapValueY)) / (1 / snapValueY), transform.position.z);
+
+        if (snapValueZ != 0)
+            transform.position = new Vector3(transform.position.x, transform.position.y, Mathf.Round(transform.position.z * (1 / snapValueZ)) / (1 / snapValueZ));
+    }
+}
+
+[ExecuteInEditMode]
 public class FindAndReplace_Editor : MonoBehaviour {
 //Perform a naming find and replace operation on the hierarchy
 
