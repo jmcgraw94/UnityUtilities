@@ -46,19 +46,59 @@ public class EditorToolKit_Editor : ScriptableObject {
 
     #region KeyboardMovement
 
-    static float nudgeDistance = 0.1f;
+    
 
     static void Move (Vector3 Displacement) {
-        foreach (GameObject CurSel in Selection.objects) {
-            CurSel.transform.position += Displacement;
+        float magnitude = Displacement.magnitude;
+        if (Tools.pivotRotation == PivotRotation.Global) {
+            foreach (GameObject CurSel in Selection.objects) {
+                CurSel.transform.position += magnitude * NearestWorldAxis (Displacement);
+            }
+        }
+        else {
+            foreach (GameObject CurSel in Selection.objects) {
+                CurSel.transform.position += magnitude * NearestLocalAxis (Displacement, CurSel.transform);
+            }
         }
     }
+
+    static Vector3 NearestWorldAxis (Vector3 input) {
+        return NearestAxis (input, new Vector3 [] { Vector3.right, Vector3.up, Vector3.forward });
+    }
+    static Vector3 NearestLocalAxis (Vector3 input, Transform trans) {
+        return NearestAxis (input, new Vector3 [] { trans.right, trans.up, trans.forward });
+    }
+
+    static Vector3 NearestAxis (Vector3 input, Vector3[] basis) {
+        Vector3 nearest = Vector3.right;
+        float dotX = Vector3.Dot (input, basis[0]);
+        float dotY = Vector3.Dot (input, basis[1]);
+        float dotZ = Vector3.Dot (input, basis[2]);
+        float absX = Mathf.Abs (dotX);
+        float absY = Mathf.Abs (dotY);
+        float absZ = Mathf.Abs (dotZ);
+
+        if (absX > absY && absX > absZ) {
+            float sign = dotX / absX;
+            nearest = sign * basis[0];
+        }
+        else if (absY > absX && absY > absZ) {
+            float sign = dotY / absY;
+            nearest = sign * basis[1];
+        }
+        else {
+            float sign = dotZ / absZ;
+            nearest = sign * basis[2];
+        }
+        return nearest;
+    }
+
+    static float nudgeDistance = 0.1f;
 
     [MenuItem ("Utilities/Move/Nudge Left &LEFT")]
     static void NudgeLeft () {
         if (Camera.current) {
-            Vector3 right = Vector3.Scale (Camera.current.transform.right, new Vector3 (1f, 0f, 1f)).normalized;
-            Move (-nudgeDistance * right);
+            Move (-nudgeDistance * Camera.current.transform.right);
         }
     }
 
@@ -66,8 +106,7 @@ public class EditorToolKit_Editor : ScriptableObject {
     static void NudgeRight () {
         if (Camera.current) {
             if (Camera.current) {
-                Vector3 right = Vector3.Scale (Camera.current.transform.right, new Vector3 (1f, 0f, 1f)).normalized;
-                Move (nudgeDistance * right);
+                Move (nudgeDistance * Camera.current.transform.right);
             }
         }
     }
@@ -75,25 +114,23 @@ public class EditorToolKit_Editor : ScriptableObject {
     [MenuItem ("Utilities/Move/Nudge Forward &UP")]
     static void NudgeForward () {
         if (Camera.current) {
-            Vector3 forward = Vector3.Scale (Camera.current.transform.forward, new Vector3 (1f, 0f, 1f)).normalized;
-            Move (nudgeDistance * forward);
+            Move (nudgeDistance * Camera.current.transform.forward);
         }
     }
 
     [MenuItem ("Utilities/Move/Nudge Backward &DOWN")]
     static void NudgeBackward () {
         if (Camera.current) {
-            Vector3 forward = Vector3.Scale (Camera.current.transform.forward, new Vector3 (1f, 0f, 1f)).normalized;
-            Move (-nudgeDistance * forward);
+            Move (-nudgeDistance * Camera.current.transform.forward);
         }
     }
 
-    static float shoveDistance = 2f;
+    static float shoveDistance = 1f;
+
     [MenuItem ("Utilities/Move/Shove Left &#LEFT")]
     static void ShoveLeft () {
         if (Camera.current) {
-            Vector3 right = Vector3.Scale (Camera.current.transform.right, new Vector3 (1f, 0f, 1f)).normalized;
-            Move (-shoveDistance * right);
+            Move (-shoveDistance * Camera.current.transform.right);
         }
     }
 
@@ -101,8 +138,7 @@ public class EditorToolKit_Editor : ScriptableObject {
     static void ShoveRight () {
         if (Camera.current) {
             if (Camera.current) {
-                Vector3 right = Vector3.Scale (Camera.current.transform.right, new Vector3 (1f, 0f, 1f)).normalized;
-                Move (shoveDistance * right);
+                Move (shoveDistance * Camera.current.transform.right);
             }
         }
     }
@@ -110,16 +146,14 @@ public class EditorToolKit_Editor : ScriptableObject {
     [MenuItem ("Utilities/Move/Shove Forward &#UP")]
     static void ShoveForward () {
         if (Camera.current) {
-            Vector3 forward = Vector3.Scale (Camera.current.transform.forward, new Vector3 (1f, 0f, 1f)).normalized;
-            Move (shoveDistance * forward);
+            Move (shoveDistance * Camera.current.transform.forward);
         }
     }
 
     [MenuItem ("Utilities/Move/Shove Backward &#DOWN")]
     static void ShoveBackward () {
         if (Camera.current) {
-            Vector3 forward = Vector3.Scale (Camera.current.transform.forward, new Vector3 (1f, 0f, 1f)).normalized;
-            Move (-shoveDistance * forward);
+            Move (-shoveDistance * Camera.current.transform.forward);
         }
     }
 
